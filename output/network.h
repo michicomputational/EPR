@@ -19,6 +19,8 @@ public:
     double t;
     static double _last_run_time;
     static double _last_run_completed_fraction;
+    static bool _globally_stopped;
+    static bool _globally_running;
 
     Network();
     void clear();
