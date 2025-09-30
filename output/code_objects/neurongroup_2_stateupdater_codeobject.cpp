@@ -133,30 +133,19 @@ void _run_neurongroup_2_stateupdater_codeobject()
 
 
     ///// CONSTANTS ///////////
-    const size_t _numI_syn_ee = 5000;
-const size_t _numI_syn_ei = 5000;
-const size_t _numI_syn_ie = 5000;
-const size_t _numI_syn_ii = 5000;
-const int64_t N = 5000;
-const size_t _numR = 5000;
+    const int64_t N = 10000;
 const size_t _numdt = 1;
-const size_t _numlastspike = 5000;
-const size_t _numnot_refractory = 5000;
+const size_t _numlastspike = 10000;
+const size_t _numnot_refractory = 10000;
 const size_t _numt = 1;
-const size_t _numtau_mem = 5000;
-const size_t _numv = 5000;
+const double tau = 0.02;
+const size_t _numv = 10000;
     ///// POINTERS ////////////
         
-    double* __restrict  _ptr_array_neurongroup_2_I_syn_ee = _array_neurongroup_2_I_syn_ee;
-    double* __restrict  _ptr_array_neurongroup_2_I_syn_ei = _array_neurongroup_2_I_syn_ei;
-    double* __restrict  _ptr_array_neurongroup_2_I_syn_ie = _array_neurongroup_2_I_syn_ie;
-    double* __restrict  _ptr_array_neurongroup_2_I_syn_ii = _array_neurongroup_2_I_syn_ii;
-    double* __restrict  _ptr_array_neurongroup_2_R = _array_neurongroup_2_R;
     double*   _ptr_array_defaultclock_dt = _array_defaultclock_dt;
     double* __restrict  _ptr_array_neurongroup_2_lastspike = _array_neurongroup_2_lastspike;
     char* __restrict  _ptr_array_neurongroup_2_not_refractory = _array_neurongroup_2_not_refractory;
     double*   _ptr_array_defaultclock_t = _array_defaultclock_t;
-    double* __restrict  _ptr_array_neurongroup_2_tau_mem = _array_neurongroup_2_tau_mem;
     double* __restrict  _ptr_array_neurongroup_2_v = _array_neurongroup_2_v;
 
 
@@ -167,7 +156,8 @@ const size_t _numv = 5000;
     const double dt = _ptr_array_defaultclock_dt[0];
     const double t = _ptr_array_defaultclock_t[0];
     const int64_t _lio_1 = _timestep(0.002, dt);
-    const double _lio_2 = - dt;
+    const double _lio_2 = 1.0f*(- dt)/tau;
+    const double _lio_3 = exp(_lio_2);
 
 
     const int _N = N;
@@ -177,21 +167,15 @@ const size_t _numv = 5000;
         // vector code
         const size_t _vectorisation_idx = _idx;
                 
-        const double I_syn_ee = _ptr_array_neurongroup_2_I_syn_ee[_idx];
-        const double I_syn_ei = _ptr_array_neurongroup_2_I_syn_ei[_idx];
-        const double I_syn_ie = _ptr_array_neurongroup_2_I_syn_ie[_idx];
-        const double I_syn_ii = _ptr_array_neurongroup_2_I_syn_ii[_idx];
-        const double R = _ptr_array_neurongroup_2_R[_idx];
         const double lastspike = _ptr_array_neurongroup_2_lastspike[_idx];
         char not_refractory = _ptr_array_neurongroup_2_not_refractory[_idx];
-        const double tau_mem = _ptr_array_neurongroup_2_tau_mem[_idx];
         double v = _ptr_array_neurongroup_2_v[_idx];
         not_refractory = _timestep(t - lastspike, dt) >= _lio_1;
         double _v;
         if(!not_refractory)
-            _v = (((((I_syn_ee * R) + (I_syn_ei * R)) + (I_syn_ie * R)) + (I_syn_ii * R)) + v) + (((- I_syn_ee) * R) - (((I_syn_ei * R) + (I_syn_ie * R)) + (I_syn_ii * R)));
+            _v = v;
         else 
-            _v = (((((I_syn_ee * R) + (I_syn_ei * R)) + (I_syn_ie * R)) + (I_syn_ii * R)) + (v * exp(1.0f*_lio_2/tau_mem))) + ((((- I_syn_ee) * R) - (((I_syn_ei * R) + (I_syn_ie * R)) + (I_syn_ii * R))) * exp(1.0f*_lio_2/tau_mem));
+            _v = _lio_3 * v;
         if(not_refractory)
             v = _v;
         _ptr_array_neurongroup_2_not_refractory[_idx] = not_refractory;

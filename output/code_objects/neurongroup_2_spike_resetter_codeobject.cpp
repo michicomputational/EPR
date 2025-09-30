@@ -129,11 +129,11 @@ void _run_neurongroup_2_spike_resetter_codeobject()
 
 
     ///// CONSTANTS ///////////
-    const int64_t N = 5000;
-const double V_r = 0.0;
-const size_t _num_spikespace = 5001;
-const size_t _numv = 5000;
-const size_t _numnot_refractory = 5000;
+    const int64_t N = 10000;
+const double V_r = 0.01;
+const size_t _num_spikespace = 10001;
+const size_t _numv = 10000;
+const size_t _numnot_refractory = 10000;
     ///// POINTERS ////////////
         
     int32_t* __restrict  _ptr_array_neurongroup_2__spikespace = _array_neurongroup_2__spikespace;

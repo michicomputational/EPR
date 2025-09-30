@@ -123,13 +123,13 @@ void _after_run_neurongroup_2_spike_thresholder_codeobject()
 {
     using namespace brian;
     ///// CONSTANTS ///////////
-    const int64_t N = 5000;
-const size_t _num_spikespace = 5001;
-const size_t _numlastspike = 5000;
-const size_t _numnot_refractory = 5000;
+    const int64_t N = 10000;
+const size_t _num_spikespace = 10001;
+const size_t _numlastspike = 10000;
+const size_t _numnot_refractory = 10000;
 const size_t _numt = 1;
-const double theta = 0.015;
-const size_t _numv = 5000;
+const double theta = 0.02;
+const size_t _numv = 10000;
     ///// POINTERS ////////////
         
     int32_t* __restrict  _ptr_array_neurongroup_2__spikespace = _array_neurongroup_2__spikespace;

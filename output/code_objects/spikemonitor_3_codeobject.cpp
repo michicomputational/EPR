@@ -12,54 +12,105 @@
 namespace {
         
     template < typename T1, typename T2 > struct _higher_type;
-    template < > struct _higher_type<int,int> { typedef int type; };
-    template < > struct _higher_type<int,long> { typedef long type; };
-    template < > struct _higher_type<int,long long> { typedef long long type; };
-    template < > struct _higher_type<int,float> { typedef float type; };
-    template < > struct _higher_type<int,double> { typedef double type; };
-    template < > struct _higher_type<int,long double> { typedef long double type; };
-    template < > struct _higher_type<long,int> { typedef long type; };
-    template < > struct _higher_type<long,long> { typedef long type; };
-    template < > struct _higher_type<long,long long> { typedef long long type; };
-    template < > struct _higher_type<long,float> { typedef float type; };
-    template < > struct _higher_type<long,double> { typedef double type; };
-    template < > struct _higher_type<long,long double> { typedef long double type; };
-    template < > struct _higher_type<long long,int> { typedef long long type; };
-    template < > struct _higher_type<long long,long> { typedef long long type; };
-    template < > struct _higher_type<long long,long long> { typedef long long type; };
-    template < > struct _higher_type<long long,float> { typedef float type; };
-    template < > struct _higher_type<long long,double> { typedef double type; };
-    template < > struct _higher_type<long long,long double> { typedef long double type; };
-    template < > struct _higher_type<float,int> { typedef float type; };
-    template < > struct _higher_type<float,long> { typedef float type; };
-    template < > struct _higher_type<float,long long> { typedef float type; };
+    template < > struct _higher_type<int32_t,int32_t> { typedef int32_t type; };
+    template < > struct _higher_type<int32_t,int64_t> { typedef int64_t type; };
+    template < > struct _higher_type<int32_t,float> { typedef float type; };
+    template < > struct _higher_type<int32_t,double> { typedef double type; };
+    template < > struct _higher_type<int32_t,long double> { typedef long double type; };
+    template < > struct _higher_type<int64_t,int32_t> { typedef int64_t type; };
+    template < > struct _higher_type<int64_t,int64_t> { typedef int64_t type; };
+    template < > struct _higher_type<int64_t,float> { typedef float type; };
+    template < > struct _higher_type<int64_t,double> { typedef double type; };
+    template < > struct _higher_type<int64_t,long double> { typedef long double type; };
+    template < > struct _higher_type<float,int32_t> { typedef float type; };
+    template < > struct _higher_type<float,int64_t> { typedef float type; };
     template < > struct _higher_type<float,float> { typedef float type; };
     template < > struct _higher_type<float,double> { typedef double type; };
     template < > struct _higher_type<float,long double> { typedef long double type; };
-    template < > struct _higher_type<double,int> { typedef double type; };
-    template < > struct _higher_type<double,long> { typedef double type; };
-    template < > struct _higher_type<double,long long> { typedef double type; };
+    template < > struct _higher_type<double,int32_t> { typedef double type; };
+    template < > struct _higher_type<double,int64_t> { typedef double type; };
     template < > struct _higher_type<double,float> { typedef double type; };
     template < > struct _higher_type<double,double> { typedef double type; };
     template < > struct _higher_type<double,long double> { typedef long double type; };
-    template < > struct _higher_type<long double,int> { typedef long double type; };
-    template < > struct _higher_type<long double,long> { typedef long double type; };
-    template < > struct _higher_type<long double,long long> { typedef long double type; };
+    template < > struct _higher_type<long double,int32_t> { typedef long double type; };
+    template < > struct _higher_type<long double,int64_t> { typedef long double type; };
     template < > struct _higher_type<long double,float> { typedef long double type; };
     template < > struct _higher_type<long double,double> { typedef long double type; };
     template < > struct _higher_type<long double,long double> { typedef long double type; };
+    // General template, used for floating point types
     template < typename T1, typename T2 >
     static inline typename _higher_type<T1,T2>::type
     _brian_mod(T1 x, T2 y)
-    {{
+    {
         return x-y*floor(1.0*x/y);
-    }}
+    }
+    // Specific implementations for integer types
+    // (from Cython, see LICENSE file)
+    template <>
+    inline int32_t _brian_mod(int32_t x, int32_t y)
+    {
+        int32_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    template <>
+    inline int64_t _brian_mod(int32_t x, int64_t y)
+    {
+        int64_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    template <>
+    inline int64_t _brian_mod(int64_t x, int32_t y)
+    {
+        int64_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    template <>
+    inline int64_t _brian_mod(int64_t x, int64_t y)
+    {
+        int64_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    // General implementation, used for floating point types
     template < typename T1, typename T2 >
     static inline typename _higher_type<T1,T2>::type
     _brian_floordiv(T1 x, T2 y)
     {{
         return floor(1.0*x/y);
     }}
+    // Specific implementations for integer types
+    // (from Cython, see LICENSE file)
+    template <>
+    inline int32_t _brian_floordiv<int32_t, int32_t>(int32_t a, int32_t b) {
+        int32_t q = a / b;
+        int32_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
+    template <>
+    inline int64_t _brian_floordiv<int32_t, int64_t>(int32_t a, int64_t b) {
+        int64_t q = a / b;
+        int64_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
+    template <>
+    inline int64_t _brian_floordiv<int64_t, int>(int64_t a, int32_t b) {
+        int64_t q = a / b;
+        int64_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
+    template <>
+    inline int64_t _brian_floordiv<int64_t, int64_t>(int64_t a, int64_t b) {
+        int64_t q = a / b;
+        int64_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
     #ifdef _MSC_VER
     #define _brian_pow(x, y) (pow((double)(x), (y)))
     #else
@@ -79,25 +130,25 @@ void _run_spikemonitor_3_codeobject()
 
     ///// CONSTANTS ///////////
     const size_t _numN = 1;
-const int64_t __source_i_neurongroup_1_subgroup_1__offset = 4000;
-const size_t _num__source_i_neurongroup_1_subgroup_1__source_i = 5000;
+const int64_t __source_i_neurongroup_2_subgroup_4__offset = 5000;
+const size_t _num__source_i_neurongroup_2_subgroup_4__source_i = 10000;
 const size_t _num_clock_t = 1;
-const int64_t _source_start = 4000;
-const int64_t _source_stop = 5000;
+const int64_t _source_start = 5000;
+const int64_t _source_stop = 5040;
 const size_t _num_source_t = 1;
-const size_t _num_spikespace = 5001;
-const size_t _numcount = 1000;
+const size_t _num_spikespace = 10001;
+const size_t _numcount = 40;
 int32_t* const _array_spikemonitor_3_i = _dynamic_array_spikemonitor_3_i.empty()? 0 : &_dynamic_array_spikemonitor_3_i[0];
 const size_t _numi = _dynamic_array_spikemonitor_3_i.size();
 double* const _array_spikemonitor_3_t = _dynamic_array_spikemonitor_3_t.empty()? 0 : &_dynamic_array_spikemonitor_3_t[0];
 const size_t _numt = _dynamic_array_spikemonitor_3_t.size();
-const size_t _num_source_idx = 1000;
+const size_t _num_source_idx = 40;
     ///// POINTERS ////////////
         
     int32_t*   _ptr_array_spikemonitor_3_N = _array_spikemonitor_3_N;
-    int32_t* __restrict  _ptr_array_neurongroup_1_i = _array_neurongroup_1_i;
+    int32_t* __restrict  _ptr_array_neurongroup_2_i = _array_neurongroup_2_i;
     double*   _ptr_array_defaultclock_t = _array_defaultclock_t;
-    int32_t* __restrict  _ptr_array_neurongroup_1__spikespace = _array_neurongroup_1__spikespace;
+    int32_t* __restrict  _ptr_array_neurongroup_2__spikespace = _array_neurongroup_2__spikespace;
     int32_t* __restrict  _ptr_array_spikemonitor_3_count = _array_spikemonitor_3_count;
     int32_t* __restrict  _ptr_array_spikemonitor_3_i = _array_spikemonitor_3_i;
     double* __restrict  _ptr_array_spikemonitor_3_t = _array_spikemonitor_3_t;
@@ -106,7 +157,7 @@ const size_t _num_source_idx = 1000;
 
     //// MAIN CODE ////////////
 
-    int32_t _num_events = _ptr_array_neurongroup_1__spikespace[_num_spikespace-1];
+    int32_t _num_events = _ptr_array_neurongroup_2__spikespace[_num_spikespace-1];
 
     if (_num_events > 0)
     {
@@ -114,7 +165,7 @@ const size_t _num_source_idx = 1000;
         size_t _end_idx = _num_events;
         for(size_t _j=0; _j<_num_events; _j++)
         {
-            const int _idx = _ptr_array_neurongroup_1__spikespace[_j];
+            const int _idx = _ptr_array_neurongroup_2__spikespace[_j];
             if (_idx >= _source_start) {
                 _start_idx = _j;
                 break;
@@ -122,7 +173,7 @@ const size_t _num_source_idx = 1000;
         }
         for(size_t _j=_num_events-1; _j>=_start_idx; _j--)
         {
-            const int _idx = _ptr_array_neurongroup_1__spikespace[_j];
+            const int _idx = _ptr_array_neurongroup_2__spikespace[_j];
             if (_idx < _source_stop) {
                 break;
             }
@@ -136,11 +187,11 @@ const size_t _num_source_idx = 1000;
 
             for(size_t _j=_start_idx; _j<_end_idx; _j++)
             {
-                const size_t _idx = _ptr_array_neurongroup_1__spikespace[_j];
+                const size_t _idx = _ptr_array_neurongroup_2__spikespace[_j];
                 const size_t _vectorisation_idx = _idx;
                                 
-                const int32_t __source_i_neurongroup_1_subgroup_1__source_i = _ptr_array_neurongroup_1_i[_idx];
-                const int32_t _source_i = __source_i_neurongroup_1_subgroup_1__source_i - __source_i_neurongroup_1_subgroup_1__offset;
+                const int32_t __source_i_neurongroup_2_subgroup_4__source_i = _ptr_array_neurongroup_2_i[_idx];
+                const int32_t _source_i = __source_i_neurongroup_2_subgroup_4__source_i - __source_i_neurongroup_2_subgroup_4__offset;
                 const int32_t _to_record_i = _source_i;
                 const double _to_record_t = _source_t;
 
@@ -159,24 +210,24 @@ void _debugmsg_spikemonitor_3_codeobject()
 {
     using namespace brian;
     const size_t _numN = 1;
-const int64_t __source_i_neurongroup_1_subgroup_1__offset = 4000;
-const size_t _num__source_i_neurongroup_1_subgroup_1__source_i = 5000;
+const int64_t __source_i_neurongroup_2_subgroup_4__offset = 5000;
+const size_t _num__source_i_neurongroup_2_subgroup_4__source_i = 10000;
 const size_t _num_clock_t = 1;
-const int64_t _source_start = 4000;
-const int64_t _source_stop = 5000;
+const int64_t _source_start = 5000;
+const int64_t _source_stop = 5040;
 const size_t _num_source_t = 1;
-const size_t _num_spikespace = 5001;
-const size_t _numcount = 1000;
+const size_t _num_spikespace = 10001;
+const size_t _numcount = 40;
 int32_t* const _array_spikemonitor_3_i = _dynamic_array_spikemonitor_3_i.empty()? 0 : &_dynamic_array_spikemonitor_3_i[0];
 const size_t _numi = _dynamic_array_spikemonitor_3_i.size();
 double* const _array_spikemonitor_3_t = _dynamic_array_spikemonitor_3_t.empty()? 0 : &_dynamic_array_spikemonitor_3_t[0];
 const size_t _numt = _dynamic_array_spikemonitor_3_t.size();
-const size_t _num_source_idx = 1000;
+const size_t _num_source_idx = 40;
         
     int32_t*   _ptr_array_spikemonitor_3_N = _array_spikemonitor_3_N;
-    int32_t* __restrict  _ptr_array_neurongroup_1_i = _array_neurongroup_1_i;
+    int32_t* __restrict  _ptr_array_neurongroup_2_i = _array_neurongroup_2_i;
     double*   _ptr_array_defaultclock_t = _array_defaultclock_t;
-    int32_t* __restrict  _ptr_array_neurongroup_1__spikespace = _array_neurongroup_1__spikespace;
+    int32_t* __restrict  _ptr_array_neurongroup_2__spikespace = _array_neurongroup_2__spikespace;
     int32_t* __restrict  _ptr_array_spikemonitor_3_count = _array_spikemonitor_3_count;
     int32_t* __restrict  _ptr_array_spikemonitor_3_i = _array_spikemonitor_3_i;
     double* __restrict  _ptr_array_spikemonitor_3_t = _array_spikemonitor_3_t;

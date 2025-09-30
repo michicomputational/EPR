@@ -131,23 +131,23 @@ void _run_spikemonitor_codeobject()
     ///// CONSTANTS ///////////
     const size_t _numN = 1;
 const size_t _num_clock_t = 1;
-const size_t _num_source_i = 5000;
+const size_t _num_source_i = 10000;
 const int64_t _source_start = 0;
-const int64_t _source_stop = 4000;
+const int64_t _source_stop = 25;
 const size_t _num_source_t = 1;
-const size_t _num_spikespace = 5001;
-const size_t _numcount = 4000;
+const size_t _num_spikespace = 10001;
+const size_t _numcount = 25;
 int32_t* const _array_spikemonitor_i = _dynamic_array_spikemonitor_i.empty()? 0 : &_dynamic_array_spikemonitor_i[0];
 const size_t _numi = _dynamic_array_spikemonitor_i.size();
 double* const _array_spikemonitor_t = _dynamic_array_spikemonitor_t.empty()? 0 : &_dynamic_array_spikemonitor_t[0];
 const size_t _numt = _dynamic_array_spikemonitor_t.size();
-const size_t _num_source_idx = 4000;
+const size_t _num_source_idx = 25;
     ///// POINTERS ////////////
         
     int32_t*   _ptr_array_spikemonitor_N = _array_spikemonitor_N;
     double*   _ptr_array_defaultclock_t = _array_defaultclock_t;
-    int32_t* __restrict  _ptr_array_neurongroup_i = _array_neurongroup_i;
-    int32_t* __restrict  _ptr_array_neurongroup__spikespace = _array_neurongroup__spikespace;
+    int32_t* __restrict  _ptr_array_neurongroup_1_i = _array_neurongroup_1_i;
+    int32_t* __restrict  _ptr_array_neurongroup_1__spikespace = _array_neurongroup_1__spikespace;
     int32_t* __restrict  _ptr_array_spikemonitor_count = _array_spikemonitor_count;
     int32_t* __restrict  _ptr_array_spikemonitor_i = _array_spikemonitor_i;
     double* __restrict  _ptr_array_spikemonitor_t = _array_spikemonitor_t;
@@ -156,7 +156,7 @@ const size_t _num_source_idx = 4000;
 
     //// MAIN CODE ////////////
 
-    int32_t _num_events = _ptr_array_neurongroup__spikespace[_num_spikespace-1];
+    int32_t _num_events = _ptr_array_neurongroup_1__spikespace[_num_spikespace-1];
 
     if (_num_events > 0)
     {
@@ -164,7 +164,7 @@ const size_t _num_source_idx = 4000;
         size_t _end_idx = _num_events;
         for(size_t _j=0; _j<_num_events; _j++)
         {
-            const int _idx = _ptr_array_neurongroup__spikespace[_j];
+            const int _idx = _ptr_array_neurongroup_1__spikespace[_j];
             if (_idx >= _source_start) {
                 _start_idx = _j;
                 break;
@@ -172,7 +172,7 @@ const size_t _num_source_idx = 4000;
         }
         for(size_t _j=_num_events-1; _j>=_start_idx; _j--)
         {
-            const int _idx = _ptr_array_neurongroup__spikespace[_j];
+            const int _idx = _ptr_array_neurongroup_1__spikespace[_j];
             if (_idx < _source_stop) {
                 break;
             }
@@ -186,10 +186,10 @@ const size_t _num_source_idx = 4000;
 
             for(size_t _j=_start_idx; _j<_end_idx; _j++)
             {
-                const size_t _idx = _ptr_array_neurongroup__spikespace[_j];
+                const size_t _idx = _ptr_array_neurongroup_1__spikespace[_j];
                 const size_t _vectorisation_idx = _idx;
                                 
-                const int32_t _source_i = _ptr_array_neurongroup_i[_idx];
+                const int32_t _source_i = _ptr_array_neurongroup_1_i[_idx];
                 const int32_t _to_record_i = _source_i;
                 const double _to_record_t = _source_t;
 
@@ -209,22 +209,22 @@ void _debugmsg_spikemonitor_codeobject()
     using namespace brian;
     const size_t _numN = 1;
 const size_t _num_clock_t = 1;
-const size_t _num_source_i = 5000;
+const size_t _num_source_i = 10000;
 const int64_t _source_start = 0;
-const int64_t _source_stop = 4000;
+const int64_t _source_stop = 25;
 const size_t _num_source_t = 1;
-const size_t _num_spikespace = 5001;
-const size_t _numcount = 4000;
+const size_t _num_spikespace = 10001;
+const size_t _numcount = 25;
 int32_t* const _array_spikemonitor_i = _dynamic_array_spikemonitor_i.empty()? 0 : &_dynamic_array_spikemonitor_i[0];
 const size_t _numi = _dynamic_array_spikemonitor_i.size();
 double* const _array_spikemonitor_t = _dynamic_array_spikemonitor_t.empty()? 0 : &_dynamic_array_spikemonitor_t[0];
 const size_t _numt = _dynamic_array_spikemonitor_t.size();
-const size_t _num_source_idx = 4000;
+const size_t _num_source_idx = 25;
         
     int32_t*   _ptr_array_spikemonitor_N = _array_spikemonitor_N;
     double*   _ptr_array_defaultclock_t = _array_defaultclock_t;
-    int32_t* __restrict  _ptr_array_neurongroup_i = _array_neurongroup_i;
-    int32_t* __restrict  _ptr_array_neurongroup__spikespace = _array_neurongroup__spikespace;
+    int32_t* __restrict  _ptr_array_neurongroup_1_i = _array_neurongroup_1_i;
+    int32_t* __restrict  _ptr_array_neurongroup_1__spikespace = _array_neurongroup_1__spikespace;
     int32_t* __restrict  _ptr_array_spikemonitor_count = _array_spikemonitor_count;
     int32_t* __restrict  _ptr_array_spikemonitor_i = _array_spikemonitor_i;
     double* __restrict  _ptr_array_spikemonitor_t = _array_spikemonitor_t;

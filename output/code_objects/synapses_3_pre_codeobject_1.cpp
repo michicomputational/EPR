@@ -131,20 +131,20 @@ void _run_synapses_3_pre_codeobject_1()
 
 
     ///// CONSTANTS ///////////
-    double* const _array_synapses_3_U_SE = _dynamic_array_synapses_3_U_SE.empty()? 0 : &_dynamic_array_synapses_3_U_SE[0];
-const size_t _numU_SE = _dynamic_array_synapses_3_U_SE.size();
+    const double J = 0.0001;
 int32_t* const _array_synapses_3__synaptic_pre = _dynamic_array_synapses_3__synaptic_pre.empty()? 0 : &_dynamic_array_synapses_3__synaptic_pre[0];
 const size_t _num_synaptic_pre = _dynamic_array_synapses_3__synaptic_pre.size();
-double* const _array_synapses_3_x = _dynamic_array_synapses_3_x.empty()? 0 : &_dynamic_array_synapses_3_x[0];
-const size_t _numx = _dynamic_array_synapses_3_x.size();
-double* const _array_synapses_3_y = _dynamic_array_synapses_3_y.empty()? 0 : &_dynamic_array_synapses_3_y[0];
-const size_t _numy = _dynamic_array_synapses_3_y.size();
+const int64_t g = 5;
+const size_t _numv = 10000;
+const size_t _numnot_refractory = 10000;
+int32_t* const _array_synapses_3__synaptic_post = _dynamic_array_synapses_3__synaptic_post.empty()? 0 : &_dynamic_array_synapses_3__synaptic_post[0];
+const size_t _num_postsynaptic_idx = _dynamic_array_synapses_3__synaptic_post.size();
     ///// POINTERS ////////////
         
-    double* __restrict  _ptr_array_synapses_3_U_SE = _array_synapses_3_U_SE;
     int32_t* __restrict  _ptr_array_synapses_3__synaptic_pre = _array_synapses_3__synaptic_pre;
-    double* __restrict  _ptr_array_synapses_3_x = _array_synapses_3_x;
-    double* __restrict  _ptr_array_synapses_3_y = _array_synapses_3_y;
+    double* __restrict  _ptr_array_neurongroup_2_v = _array_neurongroup_2_v;
+    char* __restrict  _ptr_array_neurongroup_2_not_refractory = _array_neurongroup_2_not_refractory;
+    int32_t* __restrict  _ptr_array_synapses_3__synaptic_post = _array_synapses_3__synaptic_post;
 
 
 
@@ -153,6 +153,7 @@ const size_t _numy = _dynamic_array_synapses_3_y.size();
     // scalar code
     const size_t _vectorisation_idx = -1;
         
+    const double _lio_1 = (- g) * J;
 
 
     
@@ -161,23 +162,23 @@ const size_t _numy = _dynamic_array_synapses_3_y.size();
     const int _num_spiking_synapses = _spiking_synapses->size();
 
     
-    for(int _spiking_synapse_idx=0;
-        _spiking_synapse_idx<_num_spiking_synapses;
-        _spiking_synapse_idx++)
     {
-        const size_t _idx = (*_spiking_synapses)[_spiking_synapse_idx];
-        const size_t _vectorisation_idx = _idx;
-                
-        const double U_SE = _ptr_array_synapses_3_U_SE[_idx];
-        double x = _ptr_array_synapses_3_x[_idx];
-        double y = _ptr_array_synapses_3_y[_idx];
-        y += U_SE * x; // important: update y first
-        x += (- U_SE) * x;
-        _ptr_array_synapses_3_x[_idx] = x;
-        _ptr_array_synapses_3_y[_idx] = y;
+        for(int _spiking_synapse_idx=0;
+            _spiking_synapse_idx<_num_spiking_synapses;
+            _spiking_synapse_idx++)
+        {
+            const size_t _idx = (*_spiking_synapses)[_spiking_synapse_idx];
+            const size_t _vectorisation_idx = _idx;
+                        
+            const int32_t _postsynaptic_idx = _ptr_array_synapses_3__synaptic_post[_idx];
+            const char not_refractory = _ptr_array_neurongroup_2_not_refractory[_postsynaptic_idx];
+            double v = _ptr_array_neurongroup_2_v[_postsynaptic_idx];
+            if(not_refractory)
+                v += _lio_1;
+            _ptr_array_neurongroup_2_v[_postsynaptic_idx] = v;
 
+        }
     }
-
     }
 
 }

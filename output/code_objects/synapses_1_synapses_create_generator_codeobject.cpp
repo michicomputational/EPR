@@ -16,58 +16,109 @@
 ////// SUPPORT CODE ///////
 namespace {
         
-    double _rand(const int _vectorisation_idx) {
-        return rk_double(brian::_mersenne_twister_states[0]);
+    inline double _rand(const int _vectorisation_idx) {
+        return brian::_random_generators[0].rand();
     }
     template < typename T1, typename T2 > struct _higher_type;
-    template < > struct _higher_type<int,int> { typedef int type; };
-    template < > struct _higher_type<int,long> { typedef long type; };
-    template < > struct _higher_type<int,long long> { typedef long long type; };
-    template < > struct _higher_type<int,float> { typedef float type; };
-    template < > struct _higher_type<int,double> { typedef double type; };
-    template < > struct _higher_type<int,long double> { typedef long double type; };
-    template < > struct _higher_type<long,int> { typedef long type; };
-    template < > struct _higher_type<long,long> { typedef long type; };
-    template < > struct _higher_type<long,long long> { typedef long long type; };
-    template < > struct _higher_type<long,float> { typedef float type; };
-    template < > struct _higher_type<long,double> { typedef double type; };
-    template < > struct _higher_type<long,long double> { typedef long double type; };
-    template < > struct _higher_type<long long,int> { typedef long long type; };
-    template < > struct _higher_type<long long,long> { typedef long long type; };
-    template < > struct _higher_type<long long,long long> { typedef long long type; };
-    template < > struct _higher_type<long long,float> { typedef float type; };
-    template < > struct _higher_type<long long,double> { typedef double type; };
-    template < > struct _higher_type<long long,long double> { typedef long double type; };
-    template < > struct _higher_type<float,int> { typedef float type; };
-    template < > struct _higher_type<float,long> { typedef float type; };
-    template < > struct _higher_type<float,long long> { typedef float type; };
+    template < > struct _higher_type<int32_t,int32_t> { typedef int32_t type; };
+    template < > struct _higher_type<int32_t,int64_t> { typedef int64_t type; };
+    template < > struct _higher_type<int32_t,float> { typedef float type; };
+    template < > struct _higher_type<int32_t,double> { typedef double type; };
+    template < > struct _higher_type<int32_t,long double> { typedef long double type; };
+    template < > struct _higher_type<int64_t,int32_t> { typedef int64_t type; };
+    template < > struct _higher_type<int64_t,int64_t> { typedef int64_t type; };
+    template < > struct _higher_type<int64_t,float> { typedef float type; };
+    template < > struct _higher_type<int64_t,double> { typedef double type; };
+    template < > struct _higher_type<int64_t,long double> { typedef long double type; };
+    template < > struct _higher_type<float,int32_t> { typedef float type; };
+    template < > struct _higher_type<float,int64_t> { typedef float type; };
     template < > struct _higher_type<float,float> { typedef float type; };
     template < > struct _higher_type<float,double> { typedef double type; };
     template < > struct _higher_type<float,long double> { typedef long double type; };
-    template < > struct _higher_type<double,int> { typedef double type; };
-    template < > struct _higher_type<double,long> { typedef double type; };
-    template < > struct _higher_type<double,long long> { typedef double type; };
+    template < > struct _higher_type<double,int32_t> { typedef double type; };
+    template < > struct _higher_type<double,int64_t> { typedef double type; };
     template < > struct _higher_type<double,float> { typedef double type; };
     template < > struct _higher_type<double,double> { typedef double type; };
     template < > struct _higher_type<double,long double> { typedef long double type; };
-    template < > struct _higher_type<long double,int> { typedef long double type; };
-    template < > struct _higher_type<long double,long> { typedef long double type; };
-    template < > struct _higher_type<long double,long long> { typedef long double type; };
+    template < > struct _higher_type<long double,int32_t> { typedef long double type; };
+    template < > struct _higher_type<long double,int64_t> { typedef long double type; };
     template < > struct _higher_type<long double,float> { typedef long double type; };
     template < > struct _higher_type<long double,double> { typedef long double type; };
     template < > struct _higher_type<long double,long double> { typedef long double type; };
+    // General template, used for floating point types
     template < typename T1, typename T2 >
     static inline typename _higher_type<T1,T2>::type
     _brian_mod(T1 x, T2 y)
-    {{
+    {
         return x-y*floor(1.0*x/y);
-    }}
+    }
+    // Specific implementations for integer types
+    // (from Cython, see LICENSE file)
+    template <>
+    inline int32_t _brian_mod(int32_t x, int32_t y)
+    {
+        int32_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    template <>
+    inline int64_t _brian_mod(int32_t x, int64_t y)
+    {
+        int64_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    template <>
+    inline int64_t _brian_mod(int64_t x, int32_t y)
+    {
+        int64_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    template <>
+    inline int64_t _brian_mod(int64_t x, int64_t y)
+    {
+        int64_t r = x % y;
+        r += ((r != 0) & ((r ^ y) < 0)) * y;
+        return r;
+    }
+    // General implementation, used for floating point types
     template < typename T1, typename T2 >
     static inline typename _higher_type<T1,T2>::type
     _brian_floordiv(T1 x, T2 y)
     {{
         return floor(1.0*x/y);
     }}
+    // Specific implementations for integer types
+    // (from Cython, see LICENSE file)
+    template <>
+    inline int32_t _brian_floordiv<int32_t, int32_t>(int32_t a, int32_t b) {
+        int32_t q = a / b;
+        int32_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
+    template <>
+    inline int64_t _brian_floordiv<int32_t, int64_t>(int32_t a, int64_t b) {
+        int64_t q = a / b;
+        int64_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
+    template <>
+    inline int64_t _brian_floordiv<int64_t, int>(int64_t a, int32_t b) {
+        int64_t q = a / b;
+        int64_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
+    template <>
+    inline int64_t _brian_floordiv<int64_t, int64_t>(int64_t a, int64_t b) {
+        int64_t q = a / b;
+        int64_t r = a - q*b;
+        q -= ((r != 0) & ((r ^ b) < 0));
+        return q;
+    }
     #ifdef _MSC_VER
     #define _brian_pow(x, y) (pow((double)(x), (y)))
     #else
@@ -91,14 +142,14 @@ int32_t* const _array_synapses_1_N_incoming = _dynamic_array_synapses_1_N_incomi
 const size_t _numN_incoming = _dynamic_array_synapses_1_N_incoming.size();
 int32_t* const _array_synapses_1_N_outgoing = _dynamic_array_synapses_1_N_outgoing.empty()? 0 : &_dynamic_array_synapses_1_N_outgoing[0];
 const size_t _numN_outgoing = _dynamic_array_synapses_1_N_outgoing.size();
-const int64_t N_post = 1000;
-const int64_t N_pre = 4000;
+const int64_t N_post = 10000;
+const int64_t N_pre = 5000;
 const int64_t _source_offset = 0;
 int32_t* const _array_synapses_1__synaptic_post = _dynamic_array_synapses_1__synaptic_post.empty()? 0 : &_dynamic_array_synapses_1__synaptic_post[0];
 const size_t _num_synaptic_post = _dynamic_array_synapses_1__synaptic_post.size();
 int32_t* const _array_synapses_1__synaptic_pre = _dynamic_array_synapses_1__synaptic_pre.empty()? 0 : &_dynamic_array_synapses_1__synaptic_pre[0];
 const size_t _num_synaptic_pre = _dynamic_array_synapses_1__synaptic_pre.size();
-const int64_t _target_offset = 4000;
+const int64_t _target_offset = 0;
     ///// POINTERS ////////////
         
     int32_t*   _ptr_array_synapses_1_N = _array_synapses_1_N;
@@ -160,7 +211,7 @@ const int64_t _target_offset = 4000;
             const int32_t _iter_low = 0;
             const int32_t _iter_high = N_post;
             const int32_t _iter_step = 1;
-            const double _iter_p = 0.5;
+            const double _iter_p = 0.1;
 
             _uiter_low = _iter_low;
             _uiter_high = _iter_high;
@@ -224,9 +275,6 @@ const int64_t _target_offset = 4000;
 	const int32_t newsize = _dynamic_array_synapses_1__synaptic_pre.size();
     _dynamic_array_synapses_1__synaptic_post.resize(newsize);
     _dynamic_array_synapses_1__synaptic_pre.resize(newsize);
-    _dynamic_array_synapses_1_A_SE.resize(newsize);
-    _dynamic_array_synapses_1_tau_inact.resize(newsize);
-    _dynamic_array_synapses_1_y.resize(newsize);
 	// Also update the total number of synapses
 	_ptr_array_synapses_1_N[0] = newsize;
 

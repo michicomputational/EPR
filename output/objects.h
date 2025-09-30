@@ -70,14 +70,36 @@ class RandomGenerator {
 extern std::vector< RandomGenerator > _random_generators;
 
 //////////////// clocks ///////////////////
+extern Clock defaultclock;
+extern Clock statemonitor_1_clock_1;
+extern Clock statemonitor_clock_1;
 
 //////////////// networks /////////////////
+extern Network magicnetwork;
 
 
 
 void set_variable_by_name(std::string, std::string);
 
 //////////////// dynamic arrays ///////////
+extern std::vector<double> _dynamic_array_ratemonitor_rate;
+extern std::vector<double> _dynamic_array_ratemonitor_t;
+extern std::vector<int32_t> _dynamic_array_spikemonitor_1_i;
+extern std::vector<double> _dynamic_array_spikemonitor_1_t;
+extern std::vector<int32_t> _dynamic_array_spikemonitor_i;
+extern std::vector<double> _dynamic_array_spikemonitor_t;
+extern std::vector<double> _dynamic_array_statemonitor_1_t;
+extern std::vector<double> _dynamic_array_statemonitor_t;
+extern std::vector<int32_t> _dynamic_array_synapses_2__synaptic_post;
+extern std::vector<int32_t> _dynamic_array_synapses_2__synaptic_pre;
+extern std::vector<double> _dynamic_array_synapses_2_delay;
+extern std::vector<int32_t> _dynamic_array_synapses_2_N_incoming;
+extern std::vector<int32_t> _dynamic_array_synapses_2_N_outgoing;
+extern std::vector<int32_t> _dynamic_array_synapses__synaptic_post;
+extern std::vector<int32_t> _dynamic_array_synapses__synaptic_pre;
+extern std::vector<double> _dynamic_array_synapses_delay;
+extern std::vector<int32_t> _dynamic_array_synapses_N_incoming;
+extern std::vector<int32_t> _dynamic_array_synapses_N_outgoing;
 
 //////////////// arrays ///////////////////
 extern double *_array_defaultclock_dt;
@@ -86,12 +108,86 @@ extern double *_array_defaultclock_t;
 extern const int _num__array_defaultclock_t;
 extern int64_t *_array_defaultclock_timestep;
 extern const int _num__array_defaultclock_timestep;
+extern int32_t *_array_neurongroup_1__spikespace;
+extern const int _num__array_neurongroup_1__spikespace;
+extern int32_t *_array_neurongroup_1_i;
+extern const int _num__array_neurongroup_1_i;
+extern double *_array_neurongroup_1_lastspike;
+extern const int _num__array_neurongroup_1_lastspike;
+extern char *_array_neurongroup_1_not_refractory;
+extern const int _num__array_neurongroup_1_not_refractory;
+extern int32_t *_array_neurongroup_1_subgroup_1__sub_idx;
+extern const int _num__array_neurongroup_1_subgroup_1__sub_idx;
+extern int32_t *_array_neurongroup_1_subgroup_2__sub_idx;
+extern const int _num__array_neurongroup_1_subgroup_2__sub_idx;
+extern int32_t *_array_neurongroup_1_subgroup_3__sub_idx;
+extern const int _num__array_neurongroup_1_subgroup_3__sub_idx;
+extern int32_t *_array_neurongroup_1_subgroup_4__sub_idx;
+extern const int _num__array_neurongroup_1_subgroup_4__sub_idx;
+extern int32_t *_array_neurongroup_1_subgroup_5__sub_idx;
+extern const int _num__array_neurongroup_1_subgroup_5__sub_idx;
+extern int32_t *_array_neurongroup_1_subgroup__sub_idx;
+extern const int _num__array_neurongroup_1_subgroup__sub_idx;
+extern double *_array_neurongroup_1_v;
+extern const int _num__array_neurongroup_1_v;
+extern int32_t *_array_ratemonitor_N;
+extern const int _num__array_ratemonitor_N;
+extern int32_t *_array_spikemonitor_1__source_idx;
+extern const int _num__array_spikemonitor_1__source_idx;
+extern int32_t *_array_spikemonitor_1_count;
+extern const int _num__array_spikemonitor_1_count;
+extern int32_t *_array_spikemonitor_1_N;
+extern const int _num__array_spikemonitor_1_N;
+extern int32_t *_array_spikemonitor__source_idx;
+extern const int _num__array_spikemonitor__source_idx;
+extern int32_t *_array_spikemonitor_count;
+extern const int _num__array_spikemonitor_count;
+extern int32_t *_array_spikemonitor_N;
+extern const int _num__array_spikemonitor_N;
+extern int32_t *_array_statemonitor_1__indices;
+extern const int _num__array_statemonitor_1__indices;
+extern double *_array_statemonitor_1_clock_1_dt;
+extern const int _num__array_statemonitor_1_clock_1_dt;
+extern double *_array_statemonitor_1_clock_1_t;
+extern const int _num__array_statemonitor_1_clock_1_t;
+extern int64_t *_array_statemonitor_1_clock_1_timestep;
+extern const int _num__array_statemonitor_1_clock_1_timestep;
+extern int32_t *_array_statemonitor_1_N;
+extern const int _num__array_statemonitor_1_N;
+extern double *_array_statemonitor_1_v;
+extern const int _num__array_statemonitor_1_v;
+extern int32_t *_array_statemonitor__indices;
+extern const int _num__array_statemonitor__indices;
+extern double *_array_statemonitor_clock_1_dt;
+extern const int _num__array_statemonitor_clock_1_dt;
+extern double *_array_statemonitor_clock_1_t;
+extern const int _num__array_statemonitor_clock_1_t;
+extern int64_t *_array_statemonitor_clock_1_timestep;
+extern const int _num__array_statemonitor_clock_1_timestep;
+extern int32_t *_array_statemonitor_N;
+extern const int _num__array_statemonitor_N;
+extern double *_array_statemonitor_v;
+extern const int _num__array_statemonitor_v;
+extern int32_t *_array_synapses_2_N;
+extern const int _num__array_synapses_2_N;
+extern int32_t *_array_synapses_N;
+extern const int _num__array_synapses_N;
 
 //////////////// dynamic arrays 2d /////////
+extern DynamicArray2D<double> _dynamic_array_statemonitor_1_v;
+extern DynamicArray2D<double> _dynamic_array_statemonitor_v;
 
 /////////////// static arrays /////////////
+extern int32_t *_static_array__array_statemonitor_1__indices;
+extern const int _num__static_array__array_statemonitor_1__indices;
+extern int32_t *_static_array__array_statemonitor__indices;
+extern const int _num__static_array__array_statemonitor__indices;
 
 //////////////// synapses /////////////////
+// synapses
+extern SynapticPathway synapses_pre;
+// synapses_2
+extern SynapticPathway synapses_2_pre;
 
 // Profiling information for each code object
 }
